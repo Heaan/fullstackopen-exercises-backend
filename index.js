@@ -4,18 +4,18 @@ const morgan = require("morgan");
 
 morgan.token("request-body", (req) => JSON.stringify(req.body));
 
-const loggerFormat = (tokens, req, res) => {
-  return [
-    tokens.method(req, res),
-    tokens.url(req, res),
-    tokens.status(req, res),
-    tokens.res(req, res, "content-length"),
-    "-",
-    tokens["response-time"](req, res),
-    "ms",
-    tokens["request-body"](req, res),
-  ].join(" ");
-};
+// const loggerFormat = (tokens, req, res) => {
+//   return [
+//     tokens.method(req, res),
+//     tokens.url(req, res),
+//     tokens.status(req, res),
+//     tokens.res(req, res, "content-length"),
+//     "-",
+//     tokens["response-time"](req, res),
+//     "ms",
+//     tokens["request-body"](req, res),
+//   ].join(" ");
+// };
 
 let persons = [
   {
@@ -51,7 +51,11 @@ let persons = [
 ];
 
 app.use(express.json());
-app.use(morgan(loggerFormat));
+app.use(
+  morgan(
+    ":method :url :status :res[content-length] - :response-time ms :request-body"
+  )
+);
 
 app.get("/api/persons", (req, res) => {
   res.json(persons);
