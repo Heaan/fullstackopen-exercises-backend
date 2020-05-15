@@ -1,8 +1,0 @@
-# POST http://localhost:3001/api/persons
-POST https://stormy-journey-31086.herokuapp.com/api/persons
-Content-Type: application/json
-
-{
-  "name": "Heaan Chan",
-  "number": "555-6668888"
-}
