@@ -21,38 +21,38 @@ morgan.token("request-body", (req) => JSON.stringify(req.body));
 //   ].join(" ");
 // };
 
-let persons = [
-  {
-    name: "Arto Hellas",
-    number: "040-123456",
-    id: 1,
-  },
-  {
-    name: "Ada Lovelace",
-    number: "39-44-5323523",
-    id: 2,
-  },
-  {
-    name: "Dan Abramov",
-    number: "12-43-234345",
-    id: 3,
-  },
-  {
-    name: "Mary Poppendieck",
-    number: "39-23-6423122",
-    id: 4,
-  },
-  {
-    name: "Tom Max",
-    number: "123-223434",
-    id: 5,
-  },
-  {
-    name: "Jerry Love",
-    number: "234-234234",
-    id: 6,
-  },
-];
+// let persons = [
+//   {
+//     name: "Arto Hellas",
+//     number: "040-123456",
+//     id: 1,
+//   },
+//   {
+//     name: "Ada Lovelace",
+//     number: "39-44-5323523",
+//     id: 2,
+//   },
+//   {
+//     name: "Dan Abramov",
+//     number: "12-43-234345",
+//     id: 3,
+//   },
+//   {
+//     name: "Mary Poppendieck",
+//     number: "39-23-6423122",
+//     id: 4,
+//   },
+//   {
+//     name: "Tom Max",
+//     number: "123-223434",
+//     id: 5,
+//   },
+//   {
+//     name: "Jerry Love",
+//     number: "234-234234",
+//     id: 6,
+//   },
+// ];
 
 app.use(cors());
 app.use(express.static("build"));
@@ -74,23 +74,22 @@ app.get("/info", (req, res) => {
 <div>${new Date().toString()}<div>`);
 });
 
-app.get("/api/persons/:id", (req, res) => {
+app.get("/api/persons/:id", (req, res, next) => {
   const id = req.params.id;
-  Person.findById(id).then((person) => {
-    res.json(person.toJSON());
-  });
+  Person.findById(id)
+    .then((person) => {
+      person ? res.json(person.toJSON()) : res.status(404).end();
+    })
+    .catch((err) => next(err));
 });
 
-app.delete("/api/persons/:id", (req, res) => {
+app.delete("/api/persons/:id", (req, res, next) => {
   const id = req.params.id;
   Person.findByIdAndRemove(id)
     .then((result) => {
       res.status(204).end();
     })
-    .catch((error) => {
-      console.error(error);
-      res.status(400).send({ error: "malformatted id" });
-    });
+    .catch((err) => next(err));
 });
 
 app.post("/api/persons", (req, res) => {
@@ -108,6 +107,15 @@ app.post("/api/persons", (req, res) => {
     res.status(201).json(savedPerson.toJSON());
   });
 });
+
+const errorHandler = (err, req, res, next) => {
+  console.error(err);
+  if (err.name === "CastError" && err.kind === "ObjectId") {
+    res.status(400).send({ error: "malformatted id" });
+  }
+  next(err);
+};
+app.use(errorHandler);
 
 const PORT = process.env.PORT;
 app.listen(PORT, () => {
