@@ -2,6 +2,9 @@ const express = require("express");
 const app = express();
 const morgan = require("morgan");
 const cors = require("cors");
+const dotenv = require("dotenv");
+dotenv.config();
+const Person = require("./models/person");
 
 morgan.token("request-body", (req) => JSON.stringify(req.body));
 
@@ -61,7 +64,9 @@ app.use(
 );
 
 app.get("/api/persons", (req, res) => {
-  res.json(persons);
+  Person.find({}).then((people) => {
+    res.json(people.map((person) => person.toJSON()));
+  });
 });
 
 app.get("/info", (req, res) => {
@@ -70,9 +75,10 @@ app.get("/info", (req, res) => {
 });
 
 app.get("/api/persons/:id", (req, res) => {
-  const id = +req.params.id;
-  const person = persons.find((person) => person.id === id);
-  person ? res.json(person) : res.status(404).end();
+  const id = req.params.id;
+  Person.findById(id).then((person) => {
+    res.json(person.toJSON());
+  });
 });
 
 app.delete("/api/persons/:id", (req, res) => {
@@ -103,7 +109,7 @@ app.post("/api/persons", (req, res) => {
   res.status(201).json(person);
 });
 
-const PORT = process.env.PORT || 3001;
+const PORT = process.env.PORT;
 app.listen(PORT, () => {
   console.log(`Server running on port ${PORT}`);
 });
