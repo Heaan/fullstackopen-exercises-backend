@@ -86,8 +86,22 @@ app.get("/api/persons/:id", (req, res, next) => {
 app.delete("/api/persons/:id", (req, res, next) => {
   const id = req.params.id;
   Person.findByIdAndRemove(id)
-    .then((result) => {
+    .then(() => {
       res.status(204).end();
+    })
+    .catch((err) => next(err));
+});
+
+app.put("/api/persons/:id", (req, res, next) => {
+  const id = req.params.id;
+  const body = req.body;
+  const newNumber = {
+    name: body.name,
+    number: body.number,
+  };
+  Person.findByIdAndUpdate(id, newNumber, { new: true })
+    .then((updatePerson) => {
+      updatePerson ? res.json(updatePerson.toJSON()) : res.status(404).end();
     })
     .catch((err) => next(err));
 });

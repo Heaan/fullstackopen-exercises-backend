@@ -1,11 +1,12 @@
 const mongoose = require("mongoose");
+mongoose.set("useFindAndModify", false);
 const url = process.env.MONGODB_URL;
 
 console.log("connecting to the MongoDB");
 
 mongoose
   .connect(url, { useNewUrlParser: true, useUnifiedTopology: true })
-  .then((result) => {
+  .then(() => {
     console.log("connected to the MongoDB");
   })
   .catch((error) => {
