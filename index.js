@@ -108,7 +108,7 @@ app.put("/api/persons/:id", (req, res, next) => {
     .catch((err) => next(err));
 });
 
-app.post("/api/persons", (req, res) => {
+app.post("/api/persons", (req, res, next) => {
   const body = req.body;
   if (!body.name || !body.number) {
     return res.status(400).json({
@@ -119,15 +119,20 @@ app.post("/api/persons", (req, res) => {
     name: body.name,
     number: body.number,
   });
-  person.save().then((savedPerson) => {
-    res.status(201).json(savedPerson.toJSON());
-  });
+  person
+    .save()
+    .then((savedPerson) => {
+      res.status(201).json(savedPerson.toJSON());
+    })
+    .catch((err) => next(err));
 });
 
 const errorHandler = (err, req, res, next) => {
   console.error(err);
   if (err.name === "CastError" && err.kind === "ObjectId") {
     res.status(400).send({ error: "malformatted id" });
+  } else if (err.name === "ValidationError") {
+    res.status(400).json({ error: err.message });
   }
   next(err);
 };
