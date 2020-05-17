@@ -70,8 +70,10 @@ app.get("/api/persons", (req, res) => {
 });
 
 app.get("/info", (req, res) => {
-  res.send(`<div>Phonebook has info for ${persons.length} people</div>
-<div>${new Date().toString()}<div>`);
+  Person.count({}).then((count) => {
+    res.send(`<div>Phonebook has info for ${count} people</div>
+  <div>${new Date().toString()}<div>`);
+  });
 });
 
 app.get("/api/persons/:id", (req, res, next) => {
