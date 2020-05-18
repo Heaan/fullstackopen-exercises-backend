@@ -1,7 +1,7 @@
-const mongoose = require("mongoose");
+const mongoose = require('mongoose');
 
 if (process.argv.length < 5) {
-  console.log("give password & name & number as argument");
+  console.log('give password & name & number as argument');
   process.exit(1);
 }
 const password = process.argv[2];
@@ -17,7 +17,7 @@ const personSchema = new mongoose.Schema({
   number: String,
 });
 
-const Person = mongoose.model("Person", personSchema);
+const Person = mongoose.model('Person', personSchema);
 
 const person = new Person({
   name: name,
@@ -33,7 +33,7 @@ person
   })
   .then(() => {
     Person.find({}).then((result) => {
-      console.log("phonebook:");
+      console.log('phonebook:');
       result.forEach((person) => {
         console.log(`${person.name} ${person.number}`);
       });
@@ -41,7 +41,7 @@ person
     });
   })
   .catch((err) => {
-    console.log("something wrong");
+    console.log('something wrong');
     console.error(err);
     mongoose.connection.close();
   });

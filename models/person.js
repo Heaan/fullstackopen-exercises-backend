@@ -1,9 +1,9 @@
-const mongoose = require("mongoose");
-const uniqueValidator = require("mongoose-unique-validator");
-mongoose.set("useFindAndModify", false);
+const mongoose = require('mongoose');
+const uniqueValidator = require('mongoose-unique-validator');
+mongoose.set('useFindAndModify', false);
 const url = process.env.MONGODB_URI;
 
-console.log("connecting to the MongoDB");
+console.log('connecting to the MongoDB');
 
 mongoose
   .connect(url, {
@@ -12,10 +12,10 @@ mongoose
     useCreateIndex: true,
   })
   .then(() => {
-    console.log("connected to the MongoDB");
+    console.log('connected to the MongoDB');
   })
   .catch((error) => {
-    console.log("error connecting to the MongoDB: ", error);
+    console.log('error connecting to the MongoDB: ', error);
   });
 
 const personSchema = new mongoose.Schema({
@@ -34,7 +34,7 @@ const personSchema = new mongoose.Schema({
 
 personSchema.plugin(uniqueValidator);
 
-personSchema.set("toJSON", {
+personSchema.set('toJSON', {
   transform: (document, reObj) => {
     reObj.id = reObj._id.toString();
     delete reObj._id;
@@ -42,4 +42,4 @@ personSchema.set("toJSON", {
   },
 });
 
-module.exports = mongoose.model("Person", personSchema);
+module.exports = mongoose.model('Person', personSchema);
